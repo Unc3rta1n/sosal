@@ -58,15 +58,38 @@ session.cookie_httponly = 1
 В файле `/var/www/module/Application/src/Module.php` добавлен метод `onBootstrap`:
 
 ```php
-public function onBootstrap(MvcEvent $e)
-{
-    $application = $e->getApplication();
-    $serviceManager = $application->getServiceManager();
+<?php
 
-    // Запуск сессии
-    $sessionManager = $serviceManager->get(SessionManager::class);
-    $sessionManager->start();
+declare(strict_types=1);
+namespace Application;
+
+use Laminas\Mvc\MvcEvent;
+use Laminas\Session\SessionManager;
+class Module
+{
+    public function getConfig(): array
+    {
+        /** @var array $config */
+        $config = include __DIR__ . '/../config/module.config.php';
+        return $config;
+    }
+    /**
+     * Метод, вызываемый при запуске приложения
+     *
+     * @param MvcEvent $e
+     * @return void
+     */
+    public function onBootstrap(MvcEvent $e)
+    {
+        $application = $e->getApplication();
+        $serviceManager = $application->getServiceManager();
+
+        // Запуск сессии
+        $sessionManager = $serviceManager->get(SessionManager::class);
+        $sessionManager->start();
+    }
 }
+
 ```
 
 ## Добавление маршрутов в `module.config.php`
